@@ -16,11 +16,11 @@ echo
 
 usage() {
     echo "usage: $0 -t <target> -p <ports> [-m <timeout>] [-h]"
-    echo "\t-t <target>\t-- singular hostname to scan"
-    echo "\t-p <ports>\t-- ports to scan. ex: 1-1024,1055,3333-4444"
-    echo "\t-m <timeout>\t-- curl timeout in seconds"
-    echo "\t-v\t\t-- toggle verbose output"
-    echo "\t-h\t\t-- this help menu"
+    echo -e "\t-t <target>\t-- singular hostname to scan"
+    echo -e "\t-p <ports>\t-- ports to scan. ex: 1-1024,1055,3333-4444"
+    echo -e "\t-m <timeout>\t-- curl timeout in seconds"
+    echo -e "\t-v\t\t-- toggle verbose output"
+    echo -e "\t-h\t\t-- this help menu"
 
     exit 1
 }
