@@ -66,7 +66,12 @@ while [ $# -gt 0 ]; do
 	-t) target=$2
 	    shift
 	    ;;
-	-p) ports=$2
+	-p) # Deal with ports
+	    if [ "$2" == "all" ]; then
+		ports="1-65535"
+	    else
+		ports=$2
+	    fi
 	    shift
 	    ;;
 	-m) timeout=$2
@@ -124,7 +129,10 @@ for token in $ports; do
 done
 
 # uniq ports list
+# TODO: This is slow AF.. fix it.
+echo -n "[+] Building list of ports.. "
 ports=$(echo "$out" | xargs -n 1 | sort -nu | xargs)
+echo "Done."
 
 populate_port_index
 
