@@ -143,13 +143,13 @@ for port in $ports; do
 	    exit 1
 	    ;;
 	7) # Failed to connect
-	    if [ $VERBOSE ]; then
+	    if [ $VERBOSE -eq 1 ]; then
 		echo "[*] Port ${port}/${service} -- Failed to connect"
 	    fi
 	    continue
 	    ;;
 	28) # Operation Timeout
-	    if [ $VERBOSE ]; then
+	    if [ $VERBOSE -eq 1 ]; then
 		echo "[*] Port ${port}/${service} -- Operation Timeout"
 	    fi
 	    continue
