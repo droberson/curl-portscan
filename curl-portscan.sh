@@ -36,7 +36,7 @@ populate_port_index() {
     while read -r line; do
 	tmp=($line)
 
-	port=`echo ${tmp[1]} | cut -d / -f 1`
+	port=$(echo "${tmp[1]}" | cut -d / -f 1)
 	service=${tmp[0]}
 
 	PORTINDEX[$port]=$service
@@ -47,7 +47,7 @@ populate_port_index() {
 get_port_index() {
     service=${PORTINDEX[$1]}
 
-    if [ ! $service ]; then
+    if [ ! "$service" ]; then
 	service="unknown"
     fi
 
@@ -89,8 +89,8 @@ while [ $# -gt 0 ]; do
 done
 
 # Make sure a host is set!
-if [ ! $target ]; then
-    echo "[-] Must specify a host with -t"
+if [ ! "$target" ]; then
+    echo "[-] Syntax Error. Must specify a host with -t"
     echo "[-] Exiting"
     exit 1
 fi
@@ -103,38 +103,40 @@ if [[ ! "$ports" =~ ^[0-9,-]+$ ]]; then
 fi
 
 # replace commas with space to make life easier on @dmfroberson
-ports=`echo $ports | tr , ' '`
+ports=$(echo "$ports" | tr , ' ')
 
 # deal with ranges of ports
 for token in $ports; do
     if [[ $token == *"-"* ]]; then
-	token=`echo $token | tr \- ' '`
+	token=$(echo "$token" | tr - ' ')
 
 	# Verify that the range makes sense
 	tmp=($token)
-	if [ ${tmp[0]} -ge ${tmp[1]} ]; then
+	if [ "${tmp[0]}" -ge "${tmp[1]}" ]; then
 	    echo "[-] Syntax error. Invalid port range: ${tmp[0]}-${tmp[1]}"
 	    echo "[-] Exiting."
 	    exit 1
 	fi
 
-	token=`seq -s ' ' $token`
+	token=$(seq -s ' ' $token)
     fi
     out="$out $token"
 done
 
 # uniq ports list
-ports=`echo $out | xargs -n 1 | sort -nu | xargs`
+ports=$(echo "$out" | xargs -n 1 | sort -nu | xargs)
 
 populate_port_index
 
 # Do the scan.
-echo "[+] Scanning `echo $ports | wc -w` ports on $target"
+portcount=$(echo "$ports" | wc -w)
+echo [+] Scanning "$portcount" ports on "$target"
+echo
 
 count=0
 for port in $ports; do
-    service=$(get_port_index $port)
-    curl -s -m $timeout ${target}:${port} > /dev/null
+    service=$(get_port_index "$port")
+    curl -s -m "$timeout" "${target}":"${port}" > /dev/null
 
     case $? in
 	6) # Failed to resolve
