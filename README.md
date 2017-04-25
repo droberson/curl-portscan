@@ -7,7 +7,8 @@ typically viewed as malicious.
 This scanner sucks, but gets the job done.
 
 Scanning can also be done via a 1 liner:
-	$ for i in {1..1024}; do curl -s -m 1 localhost:$i >/dev/null; if [ ! $? -eq 7 ] && [ ! $? -eq 28 ]; then echo open: $i; fi; done
+
+	 $ for i in {1..1024}; do curl -s -m 1 localhost:$i >/dev/null; if [ ! $? -eq 7 ] && [ ! $? -eq 28 ]; then echo open: $i; fi; done
 
 
 ## TODO
