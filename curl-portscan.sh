@@ -9,6 +9,7 @@
 DEFAULT_PORTS="1-1024"
 DEFAULT_TIMEOUT=1
 PORTINDEX=""
+VERBOSE=0
 
 echo "[+] curl-portscan.sh by Daniel Roberson @dmfroberson"
 echo
@@ -18,6 +19,7 @@ usage() {
     echo "\t-t <target>\t-- singular hostname to scan"
     echo "\t-p <ports>\t-- ports to scan. ex: 1-1024,1055,3333-4444"
     echo "\t-m <timeout>\t-- curl timeout in seconds"
+    echo "\t-v\t\t-- toggle verbose output"
     echo "\t-h\t\t-- this help menu"
 
     exit 1
@@ -68,6 +70,9 @@ while [ $# -gt 0 ]; do
 	    shift
 	    ;;
 	-m) timeout=$2
+	    shift
+	    ;;
+	-v) VERBOSE=$((VERBOSE+1))
 	    shift
 	    ;;
 	-*) echo "[-] Unknown flag: $1"
@@ -128,6 +133,7 @@ echo "[+] Scanning `echo $ports | wc -w` ports on $target"
 
 count=0
 for port in $ports; do
+    service=$(get_port_index $port)
     curl -s -m $timeout ${target}:${port} > /dev/null
 
     case $? in
@@ -137,14 +143,19 @@ for port in $ports; do
 	    exit 1
 	    ;;
 	7) # Failed to connect
+	    if [ $VERBOSE ]; then
+		echo "[*] Port ${port}/${service} -- Failed to connect"
+	    fi
 	    continue
 	    ;;
-	28) # Timeout
+	28) # Operation Timeout
+	    if [ $VERBOSE ]; then
+		echo "[*] Port ${port}/${service} -- Operation Timeout"
+	    fi
 	    continue
 	    ;;
     esac
 
-    service=$(get_port_index $port)
     echo "[+] Port ${port}/${service} appears to be open."
 
     count=$((count+1))
