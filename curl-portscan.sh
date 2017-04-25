@@ -89,8 +89,7 @@ echo "[+] Scanning `echo $ports | wc -w` ports on $target"
 count=0
 for port in $ports; do
     curl -s -m $timeout ${target}:${port} > /dev/null
-    val=$?
-    case $val in
+    case $? in
 	6) # Failed to resolve
 	    echo "[-] Unable to resolve host: $target"
 	    echo "[-] Exiting."
@@ -108,4 +107,6 @@ for port in $ports; do
     count=$((count+1))
 done
 
+echo
 echo "[+] Done. $count ports open."
+
