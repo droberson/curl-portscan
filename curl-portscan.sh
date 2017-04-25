@@ -8,6 +8,7 @@
 
 DEFAULT_PORTS="1-1024"
 DEFAULT_TIMEOUT=1
+PORTINDEX=""
 
 echo "[+] curl-portscan.sh by Daniel Roberson @dmfroberson"
 echo
@@ -20,6 +21,35 @@ usage() {
     echo "\t-h\t\t-- this help menu"
 
     exit 1
+}
+
+# Populate PORTINDEX array with service names
+populate_port_index() {
+    if [ ! -r "/etc/services" ]; then
+	return
+    fi
+
+    services=$(grep "[0-9]/tcp" /etc/services)
+
+    while read -r line; do
+	tmp=($line)
+
+	port=`echo ${tmp[1]} | cut -d / -f 1`
+	service=${tmp[0]}
+
+	PORTINDEX[$port]=$service
+    done < <(echo "$services")
+}
+
+# Print service name if it exists in PORTINDEX array or unknown if it doesn't
+get_port_index() {
+    service=${PORTINDEX[$1]}
+
+    if [ ! $service ]; then
+	service="unknown"
+    fi
+
+    echo $service
 }
 
 # set defaults
@@ -91,12 +121,15 @@ done
 # uniq ports list
 ports=`echo $out | xargs -n 1 | sort -nu | xargs`
 
+populate_port_index
+
 # Do the scan.
 echo "[+] Scanning `echo $ports | wc -w` ports on $target"
 
 count=0
 for port in $ports; do
     curl -s -m $timeout ${target}:${port} > /dev/null
+
     case $? in
 	6) # Failed to resolve
 	    echo "[-] Unable to resolve host: $target"
@@ -111,7 +144,9 @@ for port in $ports; do
 	    ;;
     esac
 
-    echo "[+] Port $port appears to be open."
+    service=$(get_port_index $port)
+    echo "[+] Port ${port}/${service} appears to be open."
+
     count=$((count+1))
 done
 
