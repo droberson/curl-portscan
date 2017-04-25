@@ -118,7 +118,7 @@ for token in $ports; do
 	    exit 1
 	fi
 
-	token=$(seq -s ' ' $token)
+	token=$(seq -s ' ' "${tmp[0]}" "${tmp[1]}")
     fi
     out="$out $token"
 done
