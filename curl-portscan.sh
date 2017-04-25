@@ -62,7 +62,7 @@ fi
 
 # Make sure port range only has numbers, hyphens, and commas
 if [[ ! "$ports" =~ ^[0-9,-]+$ ]]; then
-    echo "[-] Invalid port range: $ports"
+    echo "[-] Syntax Error. Invalid port range: $ports"
     echo "[-] Exiting"
     exit 1
 fi
@@ -74,7 +74,15 @@ ports=`echo $ports | tr , ' '`
 for token in $ports; do
     if [[ $token == *"-"* ]]; then
 	token=`echo $token | tr \- ' '`
-	# TODO: check if X > Y
+
+	# Verify that the range makes sense
+	tmp=($token)
+	if [ ${tmp[0]} -ge ${tmp[1]} ]; then
+	    echo "[-] Syntax error. Invalid port range: ${tmp[0]}-${tmp[1]}"
+	    echo "[-] Exiting."
+	    exit 1
+	fi
+
 	token=`seq -s ' ' $token`
     fi
     out="$out $token"
@@ -109,4 +117,3 @@ done
 
 echo
 echo "[+] Done. $count ports open."
-
