@@ -131,7 +131,8 @@ done
 # uniq ports list
 # TODO: This is slow AF.. fix it.
 echo -n "[+] Building list of ports.. "
-ports=$(echo "$out" | xargs -n 1 | sort -nu | xargs)
+#ports=$(echo "$out" | xargs -n 1 | sort -nu | xargs)
+ports=$out
 echo "Done."
 
 populate_port_index
