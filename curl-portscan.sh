@@ -129,10 +129,8 @@ for token in $ports; do
 done
 
 # uniq ports list
-# TODO: This is slow AF.. fix it.
 echo -n "[+] Building list of ports.. "
-#ports=$(echo "$out" | xargs -n 1 | sort -nu | xargs)
-ports=$out
+ports=$(echo "$out" | tr ' ' '\n' | sort -nu)
 echo "Done."
 
 populate_port_index
